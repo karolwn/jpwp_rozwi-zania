@@ -51,8 +51,8 @@ class Macs:
         """ Save the data into a .csv file and plot """
         self.price = self.price[50:]
         # ZADANIE 1 <--------------------------------------------
-        df = pd.DataFrame(list(zip(*[self.price, self.short_average, self.long_average, self.positions])))
-        df.columns = ['Price', 'Short average', 'Long average', 'Positions']
+        df = pd.DataFrame(list(zip(*[self.price, self.short_average, self.long_average, self.positions, self.portfolio])))
+        df.columns = ['Price', 'Short average', 'Long average', 'Positions', 'Portfolio']
         df.to_csv(symbol+'.csv', index=False)
 
         fig = plt.figure()
@@ -70,8 +70,10 @@ class Macs:
                 df['Short average'][df['Positions'] == -1.0],
                 'v', markersize=10, color='k')
 
-        plt.title(symbol)
+        ax2 = fig.add_subplot(212,  ylabel='Price')
+        df['Portfolio'].plot(ax=ax2, color='r', lw=2.)
 
+        plt.title(symbol)
         # ZADANIE 1 <--------------------------------------------
 
         plt.savefig(symbol+'.png')
