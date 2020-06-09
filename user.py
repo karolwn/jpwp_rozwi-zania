@@ -75,6 +75,29 @@ class UserLogin(Resource):
             },200
         return {'message' : "Invalid credentials"}, 401   
 
+class UserPassowrd(Resource):
+    parser = reqparse.RequestParser()
+    parser.add_argument(
+        "password", type=str, required=True, help="This field cannot be left blank!"
+    )
+
+    @classmethod
+    def post(cls):
+        data = cls.parser.parse_args()
+        ID = get_jwt_identity()
+        user = UserModel.find_by_id(ID)
+
+        password_new = data["password"]
+        salt_new = urandom(32)
+
+        data["password"] = hashPassword(password_new, salt_new)
+        data["salt"] = base64.b64encode(salt_new)
+        user.password = data['password']
+        user.salt = data['salt']
+        user.save_to_db()
+
+        return {'message': 'Hasło zostało zmienione'}, 200
+
 class UserAbout(Resource):    
     @classmethod
     @jwt_required
